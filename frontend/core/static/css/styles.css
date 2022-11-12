@@ -1,0 +1,136 @@
+header {
+    font: 1.125rem / 1.25 Inter;
+    padding: 1rem 2rem;
+    color: white;
+    background: linear-gradient(250deg, hsl(230, 40%, 20%), hsl(230, 40%, 30%));
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.button__icon {
+    width: 0.9em;
+    height: 0.9em;
+    fill: currentColor;
+    margin-right: 0.5em;
+}
+
+.nav {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.nav-main {
+    display: flex;
+    align-items: stretch;
+}
+
+.link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.link-top {
+    padding: 1.25rem 1.5rem;
+}
+
+body {
+    margin: 0;
+    font: 0.8rem / 1.5 Inter;
+}
+
+h1 {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 400;
+}
+
+main {
+    margin: 2rem auto;
+    width: 95%;
+}
+
+table {
+    border-collapse: collapse;
+    position: relative;
+}
+
+.title {
+    font-weight: bold;
+    font-size: 24px;
+    text-align: left;
+    color: #333;
+    margin-bottom: 16px;
+}
+
+th, td {
+    /* border: 0.5px solid black; */
+    padding: 8px;
+}
+
+
+thead th {
+    /* background-color: #eee; */
+    border-bottom: 0.5px solid grey;
+    /* For fixed header scrolling */
+    background: white;
+    position: sticky;
+    top: 0;
+}
+
+.courses-list thead th:nth-child(1) {
+    width: 20%;
+}
+
+.courses-list thead th:nth-child(2) {
+    width: 2%;
+}
+
+.courses-list thead th:nth-child(3) {
+    width: 6%;
+}
+
+.courses-list thead th:nth-child(4) {
+    width: 3%;
+}
+
+.courses-list thead th:nth-child(5) {
+    width: 3%;
+}
+
+.courses-list thead th:nth-child(6) {
+    width: 10%;
+}
+
+
+.courses-list thead th:nth-child(7) {
+    width: 10%;
+}
+
+.courses-list thead th:nth-child(8) {
+    width: 7%;
+}
+
+
+tbody td {
+    text-align: center;
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #fff;
+}
+
+tbody tr:nth-child(even) {
+    background-color: rgb(245, 243, 243);
+}
+
+.full {
+    background-color: rgba(199, 199, 199, 0.647);
+}
+
+div.wrapper {
+    overflow-y: auto;
+    height: 38vh;
+    margin-bottom: 2em;
+}
