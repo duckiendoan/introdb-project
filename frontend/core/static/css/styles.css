@@ -255,3 +255,37 @@ div.wrapper {
 .form__text {
     text-align: center;
 }
+
+.profile-container {
+    display: flex;
+    justify-content: center;
+    height: 80vh;
+    align-items: center;
+    padding: 0;
+}
+
+.profile-card {
+    /* font: 300 1rem 'Fira Sans', sans-serif; */
+    font-weight: 300;
+    font-size: 1rem;
+    /* box-shadow: 0 0 40px rgba(0, 0, 0, 0.2); */
+    border-radius: 4px;
+    background: #ffffff;
+    width: 500px;
+    border: 1px solid gray;
+}
+
+.name {
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin: 1rem;
+}
+
+.profile-info {
+    width: 95%;
+    margin: 1rem;
+}
+
+.profile-info td {
+    text-align: left;
+}
