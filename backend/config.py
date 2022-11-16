@@ -9,3 +9,4 @@ class Config:
     MYSQL_USERNAME = os.getenv('MYSQL_USERNAME')
     MYSQL_PASSWORD = os.getenv('MYSQL_PASSWORD')
     MYSQL_DATABASE = 'course_reg'
+    SECRET_KEY = os.getenv("SECRET_KEY")

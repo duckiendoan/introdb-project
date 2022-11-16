@@ -1,9 +1,10 @@
 import AbstractView from "./AbstractView.js";
+import Config from "../config.js"
 
 export default class extends AbstractView {
     constructor() {
         super();
-        this.setTitle("Dashboard");
+        this.setTitle("Đăng ký môn học");
     }
 
     async getHtml() {
@@ -15,6 +16,7 @@ export default class extends AbstractView {
                     <th>Tên môn học</th>
                     <th>TC</th>
                     <th>Lớp môn học</th>
+                    <th>Nhóm</th>
                     <th>Đã ĐK</th>
                     <th>Tối đa</th>
                     <th>Giảng viên</th>
@@ -47,7 +49,11 @@ export default class extends AbstractView {
     }
 
     initialize() {
-        fetch("/static/data.json")
+        if (!this.isLoggedIn()) {
+            window.location.href = '/login';
+            return;
+        }
+        fetch(`${Config.API_URL}/sections`)
             .then(response => response.json())
             .then(json => this.loadTableData(json));
     }
@@ -58,7 +64,12 @@ export default class extends AbstractView {
         items.forEach(item => {
           let row = table.insertRow();
           let i = 0;
-          for (const x in item) {
+          const props = [
+            'courseName', 'credits', 'classCode', 'group', 'currentCapacity', 'maxCapacity',
+            'instructor', 'time'
+          ]
+
+          for (const x of props) {
             let cell = row.insertCell(i);
             cell.innerHTML = item[x];
             if (x == 'currentCapacity' && item[x] >= item['maxCapacity']) {

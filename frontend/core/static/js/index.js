@@ -1,9 +1,15 @@
 import Dashboard from "./views/Dashboard.js";
-// import Settings from "./views/Settings.js"
+import Login from "./views/Login.js";
+import Logout from "./views/Logout.js";
+import Profile from "./views/Profile.js";
 
 const router = async () => {
     const routes = [
-        { path: "/", view: Dashboard },
+        { path: "/", view: Login },
+        { path: "/login", view: Login},
+        { path: "/dashboard", view: Dashboard},
+        { path: "/profile", view: Profile},
+        { path: "/logout", view: Logout}
         // { path: "/settings", view: Settings },
         // { path: "/profile", view: () => console.log("Viewing profile") }
     ];
@@ -23,7 +29,24 @@ const router = async () => {
         };
     }
 
-    const view  = new match.route.view();
+    const view = new match.route.view();
+    
+    if (view.isLoggedIn()) {
+        document.querySelector("header > nav").innerHTML = `
+        <ul class="nav nav-main">
+                    <li class="item-top">
+                        <a href="/profile" class="link link-top nav__link" data-link>Thông tin cá nhân</a>
+                    </li>
+                    <li class="item-top">
+                        <a href="/logout" class="link link-top" data-link><i class="button__icon fa fa-sign-out"></i>Đăng xuất</a>
+                    </li>
+                </ul>
+        `;
+    } else {
+        if (location.pathname != '/login')
+            window.location.href = '/login';
+    }
+
     document.querySelector("#app").innerHTML = await view.getHtml();
     view.initialize();
 };

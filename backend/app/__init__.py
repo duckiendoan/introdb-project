@@ -1,8 +1,10 @@
 from flask import Flask
+from flask_cors import CORS
 from config import Config
 import mysql.connector
 
 app = Flask(__name__)
+CORS(app)
 app.config.from_object(Config)
 app.config['JSON_AS_ASCII'] = False
 
