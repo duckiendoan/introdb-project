@@ -35,7 +35,7 @@ const router = async () => {
         document.querySelector("header > nav").innerHTML = `
         <ul class="nav nav-main">
                     <li class="item-top">
-                        <a href="/profile" class="link link-top nav__link" data-link>Thông tin cá nhân</a>
+                        <a href="/profile" class="link link-top nav__link" data-link><i class="button__icon fa-solid fa-user"></i>Thông tin cá nhân</a>
                     </li>
                     <li class="item-top">
                         <a href="/logout" class="link link-top" data-link><i class="button__icon fa fa-sign-out"></i>Đăng xuất</a>

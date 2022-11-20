@@ -3,7 +3,7 @@ SELECT courseName,
        numberOfCredits                                                               AS credits,
        CONCAT(s.courseID, ' ', sectionID)                                            AS classCode,
        IF(GroupNo = 0, 'CL', GroupNo)                                                AS 'group',
-
+       EXISTS(SELECT * FROM section s1 WHERE s1.courseID = s.courseID AND s1.GroupNo = 1) AS hasGroup,
        (SELECT COUNT(*)
         FROM student_enrollment se
         WHERE se.SectionID = s.SectionID
@@ -23,7 +23,7 @@ SELECT courseName,
        numberOfCredits                                                               AS credits,
        CONCAT(s.courseID, ' ', sectionID)                                            AS classCode,
        IF(GroupNo = 0, 'CL', GroupNo)                                                AS "group",
-
+       EXISTS(SELECT * FROM section s1 WHERE s1.courseID = s.courseID AND s1.GroupNo = 1) AS hasGroup,
        (SELECT COUNT(*)
         FROM student_enrollment se
         WHERE se.SectionID = s.SectionID
@@ -58,4 +58,34 @@ ACCOUNT_INFO = """
 SELECT email, IsAdmin
 FROM account
 WHERE (username = %s OR email = %s) AND password = %s
+"""
+
+ENROLLED_SECTIONS = """
+SELECT DISTINCT c.courseName,
+       c.numberOfCredits                                                                     AS credits,
+       CONCAT(s.courseID, ' ', s.sectionID)                                                  AS classCode,
+       IF(se.GroupNo = 0, 'CL', se.GroupNo)                                                  AS "group",
+       s.Instructor                                                                          AS instructor,
+       CONCAT('T', s.DayOfWeek, '-', '(', s.StartTime, '-', s.EndTime, ')', '-', s.Location) AS time
+FROM student_enrollment se
+         JOIN section
+         JOIN section s on se.SemesterCode = s.SemesterCode and se.SectionID = s.SectionID and
+                           se.AcademicYear = s.AcademicYear and se.GroupNo = s.GroupNo and se.courseID = s.courseID
+         JOIN course c on se.courseID = c.courseID
+WHERE se.studentID = %s;
+"""
+
+ENROLL_SECTIONS = """
+INSERT INTO student_enrollment VALUES (%s, %s, %s, %s, %s, %s)
+"""
+
+UNENROLL_SECTIONS = """
+DELETE
+FROM student_enrollment
+WHERE studentID = %s
+  AND SemesterCode = %s
+  AND SectionID = %s
+  AND AcademicYear = %s
+  AND GroupNo = %s
+  AND courseID = %s;
 """

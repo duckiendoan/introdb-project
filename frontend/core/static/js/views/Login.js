@@ -64,6 +64,7 @@ export default class extends AbstractView {
                 localStorage.setItem('token', content['token']);
                 localStorage.setItem('email', content['email']);
                 localStorage.setItem('info', JSON.stringify(content['info']));
+                localStorage.setItem('registered', JSON.stringify({totalCredits: 0, courses: []}));
                 location.href = '/dashboard';
             }
         })

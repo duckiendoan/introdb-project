@@ -22,6 +22,14 @@ def test():
         records = cursor.fetchall()
         return jsonify(records)
 
+@app.route('/current_semester')
+def get_current_semester():
+    return jsonify({
+        'semesterCode': 211,
+        'academicYear': '2021-2022',
+        'semesterName': 'học kì 1 năm học 2021-2022'
+    })
+
 @app.route('/login', methods=['POST'])
 def login():
     data = request.json
@@ -73,6 +81,56 @@ def get_sections():
             for i in range(len(record))
         } for record in records]
         return jsonify(result)
+
+@app.route('/sections/enrolled')
+def enrolled_sections():
+    if 'studentID' not in request.args:
+        return jsonify({'message': 'Please provide student ID as studentID param'}), 500
+    return get_registered_sections(request.args['studentID'])
+
+@app.route('/sections/enroll', methods=['POST'])
+def enroll_in_sections():
+    semester_code = 211
+    academic_year = '2021-2022'
+    data = request.json
+    query = queries.ENROLL_SECTIONS
+    # (stu_id, semester_code, sectionID, aca_year, group_no, course_id)
+    stu_id = data['studentID']
+    values = []
+    for section in data['courses']:
+        sectionID = int(section['classCode'].split(' ')[1])
+        courseID = section['classCode'].split(' ')[0]
+        group_no = 0
+        if section['group'] != 'CL':
+            group_no = int(section['group'])
+        values.append((stu_id, semester_code, sectionID, academic_year, group_no, courseID))
+
+    with db.cursor() as cursor:
+        cursor.executemany(query, values)
+        db.commit()
+        return get_registered_sections(stu_id)
+
+@app.route('/sections/unenroll', methods=['POST'])
+def unenroll_sections():
+    semester_code = 211
+    academic_year = '2021-2022'
+    data = request.json
+    query = queries.UNENROLL_SECTIONS
+    # (stu_id, semester_code, sectionID, aca_year, group_no, course_id)
+    stu_id = data['studentID']
+    values = []
+    for section in data['courses']:
+        sectionID = int(section['classCode'].split(' ')[1])
+        courseID = section['classCode'].split(' ')[0]
+        group_no = 0
+        if section['group'] != 'CL':
+            group_no = int(section['group'])
+        values.append((stu_id, semester_code, sectionID, academic_year, group_no, courseID))
+
+    with db.cursor() as cursor:
+        cursor.executemany(query, values)
+        db.commit()
+        return get_registered_sections(stu_id)
 
 def encode_auth_token(user_id):
     """
@@ -129,3 +187,18 @@ def get_admin_info(cursor, email):
         'id': record[0],
         'name': record[1],
     }
+
+def get_registered_sections(studentID):
+    query = queries.ENROLLED_SECTIONS
+    with db.cursor() as cursor:
+        cursor.execute(query, (studentID, ))
+        records = cursor.fetchall()
+        result = [{
+            cursor.column_names[i]:record[i]
+            for i in range(len(record))
+        } for record in records]
+
+        return jsonify({
+            'totalCredits': sum(r['credits'] for r in result),
+            'courses': result
+        })
