@@ -31,11 +31,12 @@ export default class extends AbstractView {
 
         <div class="title">Các môn học đã đăng kí</div>
         <div class="wrapper">
-            <table class="">
+            <table class="registered-courses-list">
                 <thead>
                     <th>Tên môn học</th>
                     <th>TC</th>
                     <th>Lớp môn học</th>
+                    <th>Nhóm</th>
                     <th>Giảng viên</th>
                     <th>Lịch học</th>
                     <th>Thao tác</th>
@@ -45,6 +46,7 @@ export default class extends AbstractView {
                 </tbody>
             </table>
         </div>
+        <button class="registerBtn">Ghi nhận</button>
         `;
     }
 
@@ -61,13 +63,15 @@ export default class extends AbstractView {
     loadTableData(json) {
         let items = json;
         const table = document.getElementById("courses-list");
-        items.forEach(item => {
+        const registeredTable = document.getElementById("registered-list");
+
+        items.forEach((item, index) => {
           let row = table.insertRow();
           let i = 0;
           const props = [
             'courseName', 'credits', 'classCode', 'group', 'currentCapacity', 'maxCapacity',
             'instructor', 'time'
-          ]
+          ];
 
           for (const x of props) {
             let cell = row.insertCell(i);
@@ -78,7 +82,22 @@ export default class extends AbstractView {
             i = i + 1;
           }
           let registerCell = row.insertCell(i);
-          registerCell.innerHTML = `<a href="#1" class="register">Đăng kí</a>`
+          registerCell.innerHTML = `<button class="registerBtn">Đăng kí</button>`;
+          registerCell.addEventListener('click', e => {
+            let row = registeredTable.insertRow();
+            const props = ['courseName', 'credits', 'classCode', 'group', 'instructor', 'time'];
+            let j = 0;
+            for (const x of props) {
+                let cell = row.insertCell(j);
+                cell.innerHTML = item[x];
+                j += 1;
+            }
+            let deleteCell = row.insertCell(j);
+            deleteCell.innerHTML = `<button class="registerBtn">Hủy</button>`;
+            deleteCell.addEventListener('click', e => {
+                registeredTable.removeChild(row);
+            });
+          });
         });
     }
 }

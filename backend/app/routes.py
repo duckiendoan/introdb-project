@@ -3,6 +3,7 @@ from flask import jsonify, request
 from hashlib import sha256
 import datetime
 import jwt
+import app.queries as queries
 
 
 @app.route('/')
@@ -27,12 +28,7 @@ def login():
     if data['username'] and data['password'] is not None:
         username = data['username']
         hashed_pwd = sha256(data['password'].encode('utf8')).hexdigest()
-        query = """
-        SELECT email, IsAdmin
-        FROM account
-        WHERE (username = %s OR email = %s)
-        AND password = %s
-        """
+        query = queries.ACCOUNT_INFO
         with db.cursor() as cursor:
             cursor.execute(query, (username, username, hashed_pwd))
             record = cursor.fetchone()
@@ -64,27 +60,13 @@ def validate_token():
 
 @app.route('/sections')
 def get_sections():
-    query = """
-    SELECT courseName,
-       numberOfCredits AS credits,
-       CONCAT(s.courseID, ' ', sectionID) AS classCode,
-       IF(GroupNo = 0, "CL", GroupNo) AS 'group',
-
-  (SELECT COUNT(*)
-   FROM student_enrollment se
-   WHERE se.SectionID = SectionID
-     AND se.AcademicYear = AcademicYear
-     AND se.courseID = courseID
-     AND se.SemesterCode = SemesterCode
-     AND se.GroupNo = GroupNo) AS currentCapacity,
-       MaxCapacity AS maxCapacity,
-       Instructor AS instructor,
-       CONCAT('T', DayOfWeek, '-', '(', StartTime, '-', EndTime, ')', '-', Location) AS time
-FROM course c
-JOIN SECTION s ON c.courseID = s.courseID
-    """
+    params = ()
+    query = queries.ALL_SECTIONS
+    if 'major' in request.args:
+        query = queries.ALL_SECTIONS_IN_MAJOR
+        params = (request.args['major'],)
     with db.cursor() as cursor:
-        cursor.execute(query)
+        cursor.execute(query, params)
         records = cursor.fetchall()
         result = [{
             cursor.column_names[i]:record[i]
@@ -127,12 +109,7 @@ def decode_auth_token(auth_token):
         return 'Invalid token. Please log in again.'
 
 def get_student_info(cursor, email):
-    query = """
-    SELECT studentID, studentName, m.majorID, m.majorName
-    FROM student
-            JOIN major m on student.majorID = m.majorID
-    WHERE email = %s
-    """
+    query = queries.STUDENT_INFO
 
     cursor.execute(query, (email,))
     record = cursor.fetchone()
@@ -144,11 +121,7 @@ def get_student_info(cursor, email):
     }
 
 def get_admin_info(cursor, email):
-    query = """
-    SELECT adminID, adminName
-    FROM admin
-    WHERE email = %s
-    """
+    query = queries.ADMIN_INFO
 
     cursor.execute(query, (email,))
     record = cursor.fetchone()
