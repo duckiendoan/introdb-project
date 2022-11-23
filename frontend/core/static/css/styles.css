@@ -74,7 +74,19 @@ table {
     font-size: 24px;
     text-align: left;
     color: #333;
-    margin-bottom: 16px;
+    margin-bottom: 0.75rem;
+}
+
+.dashboardText {
+    font-size: 1rem;
+    color: #333;
+    font-weight: 400;
+}
+
+#totalCredits {
+    font-weight: bold;
+    flex: 0.5;
+    /* text-align: right; */
 }
 
 th, td {
@@ -150,6 +162,7 @@ div.wrapper {
     overflow-y: auto;
     height: 30vh;
     margin-bottom: 2em;
+    margin-top: 1em;
 }
 
 .login-container {
