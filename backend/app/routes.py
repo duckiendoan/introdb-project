@@ -199,6 +199,6 @@ def get_registered_sections(studentID):
         } for record in records]
 
         return jsonify({
-            'totalCredits': sum(r['credits'] for r in result),
+            'totalCredits': sum(r['credits'] for r in result if r['group'] == 'CL'),
             'courses': result
         })

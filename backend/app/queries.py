@@ -1,5 +1,5 @@
 ALL_SECTIONS = """
-SELECT courseName,
+SELECT CONCAT(courseName, IF(GroupNo > 0, ' (TH)', ''))                              AS courseName,
        numberOfCredits                                                               AS credits,
        CONCAT(s.courseID, ' ', sectionID)                                            AS classCode,
        IF(GroupNo = 0, 'CL', GroupNo)                                                AS 'group',
@@ -19,7 +19,7 @@ FROM course c
 """
 
 ALL_SECTIONS_IN_MAJOR = """
-SELECT courseName,
+SELECT CONCAT(courseName, IF(GroupNo > 0, ' (TH)', ''))                              AS courseName,
        numberOfCredits                                                               AS credits,
        CONCAT(s.courseID, ' ', sectionID)                                            AS classCode,
        IF(GroupNo = 0, 'CL', GroupNo)                                                AS "group",
@@ -61,18 +61,20 @@ WHERE (username = %s OR email = %s) AND password = %s
 """
 
 ENROLLED_SECTIONS = """
-SELECT DISTINCT c.courseName,
-       c.numberOfCredits                                                                     AS credits,
-       CONCAT(s.courseID, ' ', s.sectionID)                                                  AS classCode,
-       IF(se.GroupNo = 0, 'CL', se.GroupNo)                                                  AS "group",
-       s.Instructor                                                                          AS instructor,
-       CONCAT('T', s.DayOfWeek, '-', '(', s.StartTime, '-', s.EndTime, ')', '-', s.Location) AS time
+SELECT DISTINCT CONCAT(c.courseName, IF(se.GroupNo > 0, ' (TH)', ''))                                 AS courseName,
+                c.numberOfCredits                                                                     AS credits,
+                CONCAT(s.courseID, ' ', s.sectionID)                                                  AS classCode,
+                IF(se.GroupNo = 0, 'CL', se.GroupNo)                                                  AS "group",
+                EXISTS(SELECT * FROM section s1 WHERE s1.courseID = s.courseID AND s1.GroupNo = 1)    AS hasGroup,
+                s.Instructor                                                                          AS instructor,
+                CONCAT('T', s.DayOfWeek, '-', '(', s.StartTime, '-', s.EndTime, ')', '-', s.Location) AS time
 FROM student_enrollment se
          JOIN section
          JOIN section s on se.SemesterCode = s.SemesterCode and se.SectionID = s.SectionID and
                            se.AcademicYear = s.AcademicYear and se.GroupNo = s.GroupNo and se.courseID = s.courseID
          JOIN course c on se.courseID = c.courseID
-WHERE se.studentID = %s;
+WHERE se.studentID = %s
+ORDER BY classCode;
 """
 
 ENROLL_SECTIONS = """
