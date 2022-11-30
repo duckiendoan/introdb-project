@@ -1,5 +1,6 @@
 import AbstractView from "./AbstractView.js";
 import Config from "../config.js"
+import { ModalWindow } from "../ModalWindow.js";
 
 export default class extends AbstractView {
     constructor() {
@@ -59,6 +60,7 @@ export default class extends AbstractView {
     }
 
     initialize() {
+        ModalWindow.init();
         if (!this.isLoggedIn()) {
             window.location.href = '/login';
             return;
@@ -207,12 +209,13 @@ export default class extends AbstractView {
     }
 
     showCourseEnrollmentResult(code) {
+        // ModalWindow.alert("Hello World", "Môn học đã được đăng kí!");
         if (code == 1)
-            alert("Quá số tín chỉ được phép đăng kí!");
+            ModalWindow.alertError("Đăng kí không thành công", "Quá số tín chỉ được phép đăng kí!");
         else if (code == 2)
-            alert("Môn học đã được đăng kí!");
+            ModalWindow.alertError("Đăng kí không thành công","Môn học đã được đăng kí!");
         else if (code == 3)
-            alert("Môn học bị trùng lịch học!");
+            ModalWindow.alertError("Đăng kí không thành công", "Môn học bị trùng lịch học!");
     }
 
     unenrollCourse(item) {
@@ -344,7 +347,7 @@ export default class extends AbstractView {
 
         if (result) {
             this.loadRegisteredCourses(result);
-            alert(`Đăng kí thành công ${result['totalCredits']} tín chỉ!`);
+            ModalWindow.alertSuccess("Đăng kí thành công!", `Đăng kí thành công ${result['totalCredits']} tín chỉ!`);
         }
     }
 }
